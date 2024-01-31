@@ -1,12 +1,13 @@
-import { View, Text, StyleSheet, ScrollView, FlatList } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, FlatList, Image, Pressable } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import axios from './node_modules/axios/index'
-import StockDetails from './src/components/StockList'
-import StockInfo from './src/components/StockInfo'
+import InvestedStockList from './src/components/InvestedStockList'
+import PortfolioSummary from './src/components/PortfolioSummary'
 
 const App = () => {
   const [stock_details, setStockDetails] = useState()
   const [loading, setLoading] = useState(true)
+  const [show, setShow] = useState(true)
 
   useEffect(() => {
     holdingDetails()
@@ -36,13 +37,18 @@ const App = () => {
       <Text style={styles.headerText}>Upstox Holding</Text>
       {
         loading ?
-          <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
-            <Text style={{fontSize:22,color:'black'}} >Loading...</Text>
+          <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 22, color: 'black' }} >Loading...</Text>
           </View>
           :
           <>
-            <StockDetails stock_details={stock_details} /> 
-            <StockInfo stock_details={stock_details} />
+            <InvestedStockList stock_details={stock_details} />
+            <View style={{ position: 'absolute', bottom: 0, width: '100%' }}>
+              <Pressable onPress={()=>setShow(!show)}>
+                <Image source={show ? require('./src/assets/svg/downArrowIcon.png'): require('./src/assets/svg/upArrowIcon.png')} style={styles.image} />
+              </Pressable>
+              <PortfolioSummary stock_details={stock_details} show={show} />
+            </View>
           </>
       }
 
@@ -53,7 +59,7 @@ const App = () => {
 const styles = StyleSheet.create({
   card: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: 'grey',
   },
   headerText: {
     backgroundColor: 'purple',
@@ -62,6 +68,13 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     paddingLeft: 20,
     color: 'white'
+  },
+  image: {
+    height: 18,
+    width: 18,
+    alignSelf: 'center',
+    backgroundColor: 'violet'
+
   }
 })
 
